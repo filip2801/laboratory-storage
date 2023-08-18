@@ -8,7 +8,7 @@ import spock.lang.Specification
 
 @ContextConfiguration
 @SpringBootTest
-class LaboratoryStorageApplicationTest extends Specification {
+class LaboratoryStorageApplicationSpec extends Specification {
 
     @Autowired
     ApplicationContext webApplicationContext

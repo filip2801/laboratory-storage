@@ -32,6 +32,7 @@ public class Location {
     private UUID parentId;
 
     @JdbcTypeCode(SqlTypes.JSON)
+    @Builder.Default
     private List<UUID> path = new ArrayList<>();
 
 }

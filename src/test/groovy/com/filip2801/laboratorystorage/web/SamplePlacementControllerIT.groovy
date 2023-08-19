@@ -133,7 +133,7 @@ class SamplePlacementControllerIT extends IntegrationTestSpecification {
         details.locationPath.child.child.type == LocationType.ROOM.name()
     }
 
-    def "should return 404 when the is no sample placement"() {
+    def "should return 404 when there is no sample placement"() {
         when:
         sendGetForObject("/samples/${randomUUID()}/placement")
 
@@ -141,7 +141,7 @@ class SamplePlacementControllerIT extends IntegrationTestSpecification {
         thrown status404()
     }
 
-    def "should return 404 when the is no sample placement details"() {
+    def "should return 404 when there is no sample placement details"() {
         when:
         sendGetForObject("/samples/${randomUUID()}/placement/details")
 

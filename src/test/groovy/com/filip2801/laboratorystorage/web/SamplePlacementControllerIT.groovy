@@ -1,11 +1,13 @@
 package com.filip2801.laboratorystorage.web
 
 import com.filip2801.laboratorystorage.IntegrationTestSpecification
+import com.filip2801.laboratorystorage.dto.LocationDto
 import com.filip2801.laboratorystorage.model.Location
 import com.filip2801.laboratorystorage.model.LocationRepository
 import com.filip2801.laboratorystorage.model.LocationType
 import com.filip2801.laboratorystorage.model.SamplePlacement
 import com.filip2801.laboratorystorage.model.SamplePlacementRepository
+import com.filip2801.laboratorystorage.service.LocationService
 import com.filip2801.laboratorystorage.service.SamplePlacementService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -23,11 +25,11 @@ class SamplePlacementControllerIT extends IntegrationTestSpecification {
     @Autowired
     SamplePlacementRepository samplePlacementRepository
     @Autowired
-    LocationRepository locationRepository
+    LocationService locationService
 
     def "should create sample placement"() {
         given:
-        def locationId = randomUUID()
+        def locationId = createSomeLocation()
         def employeeId = randomUUID()
         def requestPayload = [
                 locationId: locationId,
@@ -56,15 +58,16 @@ class SamplePlacementControllerIT extends IntegrationTestSpecification {
 
     def "should change sample placement"() {
         given:
+        var firstLocationId = createSomeLocation()
         def createRequestPayload = [
-                locationId: randomUUID(),
+                locationId: firstLocationId,
                 employeeId: randomUUID()
         ]
 
         def sampleId = randomUUID()
         var creationResponse = sendPut("samples/$sampleId/placement", createRequestPayload)
 
-        def locationId = randomUUID()
+        def locationId = createSomeLocation()
         def employeeId = randomUUID()
         def updateRequestPayload = [
                 locationId: locationId,
@@ -94,23 +97,15 @@ class SamplePlacementControllerIT extends IntegrationTestSpecification {
         def sampleId = randomUUID()
         def employeeId = randomUUID()
 
-        def rootLocationId = randomUUID()
-        def parentLocationId = randomUUID()
-        def sampleLocationId = randomUUID()
+        var rootLocation = locationService.createLocation(LocationDto.builder().name("Wroclaw").type(LocationType.CITY).parentId(null).build());
+        var parentLocation = locationService.createLocation(LocationDto.builder().name("C13").type(LocationType.BUILDING).parentId(rootLocation.locationId).build())
+        var sampleLocation = locationService.createLocation(LocationDto.builder().name("1.2").type(LocationType.ROOM).parentId(parentLocation.locationId).build())
 
         samplePlacementRepository.save(SamplePlacement.builder()
                 .sampleId(sampleId)
-                .locationId(sampleLocationId)
+                .locationId(sampleLocation.locationId)
                 .employeeId(employeeId)
                 .build())
-
-        locationRepository.saveAll([
-                Location.builder().locationId(sampleLocationId).name("1.2").type(LocationType.ROOM)
-                        .parentId(parentLocationId).path([rootLocationId, parentLocationId]).build(),
-                Location.builder().locationId(parentLocationId).name("C13").type(LocationType.BUILDING)
-                        .parentId(rootLocationId).path([rootLocationId]).build(),
-                Location.builder().locationId(rootLocationId).name("Wroclaw").type(LocationType.CITY)
-                        .parentId(null).path([]).build()])
 
         when:
         var detailsResponse = sendGetForObject("/samples/$sampleId/placement/details")
@@ -119,19 +114,19 @@ class SamplePlacementControllerIT extends IntegrationTestSpecification {
         detailsResponse.statusCode == HttpStatus.OK
         def details = detailsResponse.body
         details.sampleId == sampleId.toString()
-        details.locationId == sampleLocationId.toString()
+        details.locationId == sampleLocation.locationId.toString()
         details.employeeId == employeeId.toString()
 
         details.locationPath.name == "Wroclaw"
-        details.locationPath.locationId == rootLocationId.toString()
+        details.locationPath.locationId == rootLocation.locationId.toString()
         details.locationPath.type == LocationType.CITY.name()
 
         details.locationPath.child.name == "C13"
-        details.locationPath.child.locationId == parentLocationId.toString()
+        details.locationPath.child.locationId == parentLocation.locationId.toString()
         details.locationPath.child.type == LocationType.BUILDING.name()
 
         details.locationPath.child.child.name == "1.2"
-        details.locationPath.child.child.locationId == sampleLocationId.toString()
+        details.locationPath.child.child.locationId == sampleLocation.locationId.toString()
         details.locationPath.child.child.type == LocationType.ROOM.name()
     }
 
@@ -151,8 +146,38 @@ class SamplePlacementControllerIT extends IntegrationTestSpecification {
         thrown status404()
     }
 
+    def "should not create sample placement and return 400 when location does not exist"() {
+        given:
+        def locationId = randomUUID()
+        def employeeId = randomUUID()
+        def requestPayload = [
+                locationId: locationId,
+                employeeId: employeeId
+        ]
+
+        def sampleId = randomUUID()
+
+        when:
+        sendPut("samples/$sampleId/placement", requestPayload)
+
+        then:
+        thrown status400()
+    }
+
+    private UUID createSomeLocation() {
+        var location = locationService.createLocation(LocationDto.builder()
+                .name(randomUUID().toString())
+                .type(LocationType.CITY)
+                .parentId(null)
+                .build());
+        return location.locationId
+    }
+
+    private Class status400() {
+        org.springframework.web.client.HttpClientErrorException$BadRequest
+    }
+
     private Class status404() {
         org.springframework.web.client.HttpClientErrorException$NotFound
     }
-
 }

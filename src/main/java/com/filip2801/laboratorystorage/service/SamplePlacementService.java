@@ -7,6 +7,7 @@ import com.filip2801.laboratorystorage.model.Location;
 import com.filip2801.laboratorystorage.model.LocationRepository;
 import com.filip2801.laboratorystorage.model.SamplePlacement;
 import com.filip2801.laboratorystorage.model.SamplePlacementRepository;
+import com.filip2801.laboratorystorage.web.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +26,8 @@ public class SamplePlacementService {
     private final LocationRepository locationRepository;
 
     public SamplePlacement changeSampleLocation(UUID sampleId, SamplePlacementDto samplePlacementDto) {
-        // todo validate location existence ?
+        validate(samplePlacementDto);
+
         var foundSamplePlacement = samplePlacementRepository.findBySampleId(sampleId);
         if (foundSamplePlacement.isPresent()) {
             var samplePlacement = foundSamplePlacement.get();
@@ -39,6 +41,12 @@ public class SamplePlacementService {
                     .updatedAt(LocalDateTime.now())
                     .build();
             return samplePlacementRepository.save(newPlacement);
+        }
+    }
+
+    private void validate(SamplePlacementDto samplePlacementDto) {
+        if (!locationRepository.existsById(samplePlacementDto.getLocationId())) {
+            throw new BadRequestException("Location " + samplePlacementDto.getLocationId() + " does not exist");
         }
     }
 

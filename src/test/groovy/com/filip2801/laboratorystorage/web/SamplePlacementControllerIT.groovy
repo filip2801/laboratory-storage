@@ -10,6 +10,10 @@ import com.filip2801.laboratorystorage.service.SamplePlacementService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 
+import java.time.format.DateTimeFormatter
+
+import static com.filip2801.laboratorystorage.TestUtils.isOneSecondCloseToNow
+import static com.filip2801.laboratorystorage.TestUtils.parseLocalDateTime
 import static java.util.UUID.randomUUID
 
 class SamplePlacementControllerIT extends IntegrationTestSpecification {
@@ -47,7 +51,7 @@ class SamplePlacementControllerIT extends IntegrationTestSpecification {
         getResponse.body.sampleId == sampleId.toString()
         getResponse.body.locationId == locationId.toString()
         getResponse.body.employeeId == employeeId.toString()
-        getResponse.body.updatedAt // todo check date format
+        isOneSecondCloseToNow(parseLocalDateTime(getResponse.body.updatedAt))
     }
 
     def "should change sample placement"() {
@@ -82,10 +86,8 @@ class SamplePlacementControllerIT extends IntegrationTestSpecification {
         getResponse.body.sampleId == sampleId.toString()
         getResponse.body.locationId == locationId.toString()
         getResponse.body.employeeId == employeeId.toString()
-        // todo compare dates
-        // getResponse.body.updatedAt.isAfter(creationResponse.body.updatedAt)
+        parseLocalDateTime(getResponse.body.updatedAt).isAfter(parseLocalDateTime(creationResponse.body.updatedAt))
     }
-
 
     def "should get sample placement details"() {
         given:

@@ -121,11 +121,4 @@ class LocationControllerIT extends IntegrationTestSpecification {
         thrown status404()
     }
 
-    private Class status404() {
-        org.springframework.web.client.HttpClientErrorException$NotFound
-    }
-
-    private Class status400() {
-        org.springframework.web.client.HttpClientErrorException$BadRequest
-    }
 }

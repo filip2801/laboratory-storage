@@ -5,6 +5,7 @@ plugins {
 	id 'groovy'
 	id 'com.avast.gradle.docker-compose' version '0.17.4'
 	id 'jacoco'
+	id 'pmd'
 }
 apply plugin: 'docker-compose'
 

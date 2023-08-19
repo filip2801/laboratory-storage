@@ -15,4 +15,4 @@ variables:
 test:
   image: gradle:8.2.1-jdk17
   stage: test
-  script: ./gradlew test
+  script: ./gradlew check

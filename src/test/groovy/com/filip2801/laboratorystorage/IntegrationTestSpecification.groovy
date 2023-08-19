@@ -30,6 +30,10 @@ class IntegrationTestSpecification extends Specification {
         restTemplate.getForEntity("${getBaseUrl()}/${url}", HashMap)
     }
 
+    def sendGetForList(String url) {
+        restTemplate.getForEntity("${getBaseUrl()}/${url}", ArrayList)
+    }
+
     def sendPost(String url, Object requestPayload) {
         restTemplate.postForEntity("${getBaseUrl()}/${url}", requestPayload, HashMap)
     }

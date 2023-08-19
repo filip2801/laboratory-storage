@@ -3,13 +3,11 @@ package com.filip2801.laboratorystorage.service;
 import com.filip2801.laboratorystorage.dto.SampleLocationPathDto;
 import com.filip2801.laboratorystorage.dto.SamplePlacementDetailsDto;
 import com.filip2801.laboratorystorage.dto.SamplePlacementDto;
-import com.filip2801.laboratorystorage.model.Location;
-import com.filip2801.laboratorystorage.model.LocationRepository;
-import com.filip2801.laboratorystorage.model.SamplePlacement;
-import com.filip2801.laboratorystorage.model.SamplePlacementRepository;
+import com.filip2801.laboratorystorage.model.*;
 import com.filip2801.laboratorystorage.web.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -23,25 +21,38 @@ import java.util.stream.Collectors;
 public class SamplePlacementService {
 
     private final SamplePlacementRepository samplePlacementRepository;
+    private final SamplePlacementHistoryRepository samplePlacementHistoryRepository;
     private final LocationRepository locationRepository;
 
+    @Transactional
     public SamplePlacement changeSampleLocation(UUID sampleId, SamplePlacementDto samplePlacementDto) {
         validate(samplePlacementDto);
 
         var foundSamplePlacement = samplePlacementRepository.findBySampleId(sampleId);
+        SamplePlacement samplePlacement;
         if (foundSamplePlacement.isPresent()) {
-            var samplePlacement = foundSamplePlacement.get();
+            samplePlacement = foundSamplePlacement.get();
             samplePlacement.changeLocation(samplePlacementDto.getLocationId(), samplePlacementDto.getEmployeeId());
-            return samplePlacementRepository.save(samplePlacement);
         } else {
-            var newPlacement = SamplePlacement.builder()
+            samplePlacement = SamplePlacement.builder()
                     .sampleId(sampleId)
                     .locationId(samplePlacementDto.getLocationId())
                     .employeeId(samplePlacementDto.getEmployeeId())
                     .updatedAt(LocalDateTime.now())
                     .build();
-            return samplePlacementRepository.save(newPlacement);
         }
+        var savedSamplePlacement = samplePlacementRepository.save(samplePlacement);
+        savePlacementHistory(savedSamplePlacement);
+        return savedSamplePlacement;
+    }
+
+    private void savePlacementHistory(SamplePlacement samplePlacement) {
+        samplePlacementHistoryRepository.save(SamplePlacementHistory.builder()
+                .sampleId(samplePlacement.getSampleId())
+                .locationId(samplePlacement.getLocationId())
+                .employeeId(samplePlacement.getEmployeeId())
+                .updatedAt(samplePlacement.getUpdatedAt())
+                .build());
     }
 
     private void validate(SamplePlacementDto samplePlacementDto) {

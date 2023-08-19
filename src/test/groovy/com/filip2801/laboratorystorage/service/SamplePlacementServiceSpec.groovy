@@ -5,6 +5,7 @@ import com.filip2801.laboratorystorage.model.LocationInMemoryRepository
 import com.filip2801.laboratorystorage.model.LocationRepository
 import com.filip2801.laboratorystorage.model.LocationType
 import com.filip2801.laboratorystorage.model.SamplePlacement
+import com.filip2801.laboratorystorage.model.SamplePlacementHistoryInMemoryRepository
 import com.filip2801.laboratorystorage.model.SamplePlacementInMemoryRepository
 import com.filip2801.laboratorystorage.model.SamplePlacementRepository
 import spock.lang.Specification
@@ -20,7 +21,7 @@ class SamplePlacementServiceSpec extends Specification {
     def setup() {
         samplePlacementRepository = new SamplePlacementInMemoryRepository()
         locationRepository = new LocationInMemoryRepository()
-        samplePlacementService = new SamplePlacementService(samplePlacementRepository, locationRepository)
+        samplePlacementService = new SamplePlacementService(samplePlacementRepository, new SamplePlacementHistoryInMemoryRepository(), locationRepository)
     }
 
     def "should find sample placement details"() {

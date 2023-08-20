@@ -19,6 +19,7 @@ Technologies:
 - jacoco - code coverage
 - pmd - static code analysis
 - swagger - api documentation
+- flyway - db schema versioning
 
 ### Starting application
 Run ```./gradlew bootRun```

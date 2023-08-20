@@ -3,8 +3,11 @@ package com.filip2801.laboratorystorage.web;
 import com.filip2801.laboratorystorage.dto.SamplePlacementHistoryDto;
 import com.filip2801.laboratorystorage.model.SamplePlacementHistory;
 import com.filip2801.laboratorystorage.model.SamplePlacementHistoryRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,13 +19,15 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/samples/{sampleId}/placement-history")
+@RequestMapping(value = "/samples/{sampleId}/placement-history", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
 public class SamplePlacementHistoryController {
 
     private final SamplePlacementHistoryRepository samplePlacementHistoryRepository;
 
     @GetMapping
+    @Operation(summary = "Get sample placement history")
+    @ApiResponse(responseCode = "200")
     List<SamplePlacementHistoryDto> findSampleLocationHistory(@PathVariable UUID sampleId) {
         return samplePlacementHistoryRepository.findAllBySampleIdOrderByUpdatedAtAsc(sampleId).stream()
                 .map(this::toDto)

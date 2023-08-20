@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
+import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.client.RestTemplate
 import spock.lang.Specification
@@ -27,18 +29,30 @@ class IntegrationTestSpecification extends Specification {
     }
 
     def sendGetForObject(String url) {
-        restTemplate.getForEntity("${getBaseUrl()}/${url}", HashMap)
+        restTemplate.exchange("${getBaseUrl()}/${url}", HttpMethod.GET, entityWithHeaders(), HashMap)
     }
 
     def sendGetForList(String url) {
-        restTemplate.getForEntity("${getBaseUrl()}/${url}", ArrayList)
+        restTemplate.exchange("${getBaseUrl()}/${url}", HttpMethod.GET, entityWithHeaders(), ArrayList)
     }
 
     def sendPost(String url, Object requestPayload) {
-        restTemplate.postForEntity("${getBaseUrl()}/${url}", requestPayload, HashMap)
+        restTemplate.exchange("${getBaseUrl()}/${url}", HttpMethod.POST, entityWithHeaders(requestPayload), HashMap)
     }
 
     def sendPut(String url, Object requestPayload) {
-        restTemplate.exchange("${getBaseUrl()}/${url}", HttpMethod.PUT, new HttpEntity<Object>(requestPayload), HashMap)
+        restTemplate.exchange("${getBaseUrl()}/${url}", HttpMethod.PUT, entityWithHeaders(requestPayload), HashMap)
+    }
+
+    private HttpEntity<Object> entityWithHeaders(requestPayload) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return new HttpEntity<>(requestPayload, headers);
+    }
+
+    private HttpEntity<Object> entityWithHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return new HttpEntity<>(headers);
     }
 }

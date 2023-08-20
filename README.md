@@ -6,6 +6,7 @@ Where is my test tube?
 Imagine a gigantic laboratory network with many buildings in many locations, numerous rooms, lab workers, equipment, storage compartments, etc.
 Your job is to create a service to track the placement of test samples.
 
+## Application
 ### Tech stack
 Application written in Java.
 
@@ -20,7 +21,7 @@ Technologies:
 - swagger - api documentation
 
 ### Starting application
-Run ``` ./gradlew bootRun```
+Run ```./gradlew bootRun```
 
 This command will start
 - postgres db as docker container, on port 15432
@@ -40,14 +41,14 @@ Requirements:
 - docker
 
 To start postgres db container
-``` ./gradlew composeUp```
+```./gradlew composeUp```
 
 #### Stopping docker db container
 Requirements:
 - docker
 
 To start postgres db container
-``` ./gradlew composeDown```
+```./gradlew composeDown```
 
 ### Running tests
 Requirements: 

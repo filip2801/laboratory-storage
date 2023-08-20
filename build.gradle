@@ -51,10 +51,13 @@ dockerCompose {
 	useComposeFiles = ['docker-compose.yml']
 }
 
+dockerCompose.isRequiredBy(bootRun)
+
 test {
 	finalizedBy jacocoTestReport
 	finalizedBy jacocoTestCoverageVerification
 }
+
 jacocoTestReport {
 	dependsOn test
 	reports {

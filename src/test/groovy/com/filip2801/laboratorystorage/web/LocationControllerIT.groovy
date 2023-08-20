@@ -24,7 +24,6 @@ class LocationControllerIT extends IntegrationTestSpecification {
         creationResponse.statusCode == HttpStatus.OK
         creationResponse.body.name == 'London'
         creationResponse.body.type == 'CITY'
-        creationResponse.body.path == []
         creationResponse.body.locationId
         !creationResponse.body.parentId
 
@@ -33,7 +32,6 @@ class LocationControllerIT extends IntegrationTestSpecification {
         getResponse.statusCode == HttpStatus.OK
         getResponse.body.name == 'London'
         getResponse.body.type == 'CITY'
-        getResponse.body.path == []
         getResponse.body.locationId == creationResponse.body.locationId
     }
 
@@ -61,41 +59,6 @@ class LocationControllerIT extends IntegrationTestSpecification {
         childLocationResponse.body.type == 'BUILDING'
         childLocationResponse.body.locationId
         childLocationResponse.body.parentId == rootLocationResponse.body.locationId
-        childLocationResponse.body.path == [rootLocationResponse.body.locationId]
-    }
-
-    def "should create second child location"() {
-        given:
-        def rootLocationCreateRequest = [
-                name: 'London',
-                type: 'CITY'
-        ]
-        var rootLocationResponse = sendPost("locations", rootLocationCreateRequest)
-
-
-        def parentLocationCreateRequest = [
-                name    : 'D1',
-                type    : 'BUILDING',
-                parentId: rootLocationResponse.body.locationId
-        ]
-        var parentLocationResponse = sendPost("locations", parentLocationCreateRequest)
-
-        def childLocationCreateRequest = [
-                name    : '1.2',
-                type    : 'ROOM',
-                parentId: parentLocationResponse.body.locationId
-        ]
-
-        when:
-        var childLocationResponse = sendPost("locations", childLocationCreateRequest)
-
-        then:
-        childLocationResponse.statusCode == HttpStatus.OK
-        childLocationResponse.body.name == '1.2'
-        childLocationResponse.body.type == 'ROOM'
-        childLocationResponse.body.locationId
-        childLocationResponse.body.parentId == parentLocationResponse.body.locationId
-        childLocationResponse.body.path == [rootLocationResponse.body.locationId, parentLocationResponse.body.locationId]
     }
 
     def "should not create location and return 400 when parent id does not exist"() {

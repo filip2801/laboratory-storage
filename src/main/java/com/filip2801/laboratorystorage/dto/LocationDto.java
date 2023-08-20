@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
 import java.util.UUID;
 
 @Builder
@@ -18,5 +17,4 @@ public class LocationDto {
     private String name;
     private LocationType type;
     private UUID parentId;
-    private List<UUID> path;
 }

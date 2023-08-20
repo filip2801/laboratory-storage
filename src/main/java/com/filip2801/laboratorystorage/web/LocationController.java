@@ -35,7 +35,6 @@ public class LocationController {
                 .name(location.getName())
                 .type(location.getType())
                 .parentId(location.getParentId())
-                .path(location.getPath())
                 .build();
     }
 

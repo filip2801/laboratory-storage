@@ -12,6 +12,7 @@ import com.filip2801.laboratorystorage.service.SamplePlacementService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 import static com.filip2801.laboratorystorage.TestUtils.isOneSecondCloseToNow
@@ -48,7 +49,7 @@ class SamplePlacementControllerIT extends IntegrationTestSpecification {
         putResponse.body.employeeId == employeeId.toString()
 
         and:
-        def getResponse= sendGetForObject("/samples/$sampleId/placement")
+        def getResponse = sendGetForObject("/samples/$sampleId/placement")
         getResponse.statusCode == HttpStatus.OK
         getResponse.body.sampleId == sampleId.toString()
         getResponse.body.locationId == locationId.toString()
@@ -84,7 +85,7 @@ class SamplePlacementControllerIT extends IntegrationTestSpecification {
         updateResponse.body.employeeId == employeeId.toString()
 
         and:
-        def getResponse= sendGetForObject("/samples/$sampleId/placement")
+        def getResponse = sendGetForObject("/samples/$sampleId/placement")
         getResponse.statusCode == HttpStatus.OK
         getResponse.body.sampleId == sampleId.toString()
         getResponse.body.locationId == locationId.toString()
@@ -105,6 +106,7 @@ class SamplePlacementControllerIT extends IntegrationTestSpecification {
                 .sampleId(sampleId)
                 .locationId(sampleLocation.locationId)
                 .employeeId(employeeId)
+                .updatedAt(LocalDateTime.now())
                 .build())
 
         when:

@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping(value = "/samples/{sampleId}/placement-history", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/samples/{sampleId}/placement-history", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
 public class SamplePlacementHistoryController {
 

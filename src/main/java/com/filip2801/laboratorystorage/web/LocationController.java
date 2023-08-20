@@ -17,13 +17,13 @@ import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping(value = "/locations", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/locations", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
 public class LocationController {
 
     private final LocationService locationService;
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create new location", description = "Location id is created by server")
     @ApiResponses({
             @ApiResponse(responseCode = "200"),

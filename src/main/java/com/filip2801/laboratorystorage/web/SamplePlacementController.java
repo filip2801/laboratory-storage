@@ -18,13 +18,13 @@ import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping(value = "/samples/{sampleId}/placement", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/samples/{sampleId}/placement", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
 public class SamplePlacementController {
 
     private final SamplePlacementService samplePlacementService;
 
-    @PutMapping
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Change sample location")
     @ApiResponses({
             @ApiResponse(responseCode = "200"),

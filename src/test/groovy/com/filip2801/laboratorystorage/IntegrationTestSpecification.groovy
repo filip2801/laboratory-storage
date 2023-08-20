@@ -29,11 +29,11 @@ class IntegrationTestSpecification extends Specification {
     }
 
     def sendGetForObject(String url) {
-        restTemplate.exchange("${getBaseUrl()}/${url}", HttpMethod.GET, entityWithHeaders(), HashMap)
+        restTemplate.getForEntity("${getBaseUrl()}/${url}", HashMap)
     }
 
     def sendGetForList(String url) {
-        restTemplate.exchange("${getBaseUrl()}/${url}", HttpMethod.GET, entityWithHeaders(), ArrayList)
+        restTemplate.getForEntity("${getBaseUrl()}/${url}", ArrayList)
     }
 
     def sendPost(String url, Object requestPayload) {

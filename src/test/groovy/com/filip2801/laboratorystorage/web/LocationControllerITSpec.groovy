@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus
 
 import static java.util.UUID.randomUUID
 
-class LocationControllerIT extends IntegrationTestSpecification {
+class LocationControllerITSpec extends IntegrationTestSpecification {
 
     def "should create root location"() {
         given:

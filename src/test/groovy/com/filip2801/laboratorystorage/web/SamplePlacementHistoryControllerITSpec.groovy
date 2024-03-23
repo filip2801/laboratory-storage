@@ -14,7 +14,7 @@ import static com.filip2801.laboratorystorage.TestUtils.isOneSecondCloseToNow
 import static com.filip2801.laboratorystorage.TestUtils.parseLocalDateTime
 import static java.util.UUID.randomUUID
 
-class SamplePlacementHistoryControllerIT extends IntegrationTestSpecification {
+class SamplePlacementHistoryControllerITSpec extends IntegrationTestSpecification {
 
     @Autowired
     LocationService locationService
